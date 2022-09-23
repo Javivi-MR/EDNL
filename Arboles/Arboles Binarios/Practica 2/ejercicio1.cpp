@@ -69,4 +69,3 @@ bool similaresRec(Abin<tElto> A,Abin<tElto> B,Abin<tElto>::nodo na,Abin<tElto>::
         }
     }
 }
-//end
