@@ -45,7 +45,7 @@ bool abyacentes (casilla c1, casilla c2)
 {
     if(c1.z == c2.z) // si estan en el mismo tablero:
     {
-        return (abs(c1.x- c2.x) == 1 && abs(c1.y - c2.y) == 1);
+        return (abs(c1.x- c2.x) + abs(c1.y - c2.y) == 1);
     }
     else
     {
