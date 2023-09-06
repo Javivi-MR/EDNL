@@ -152,9 +152,9 @@ fauno laberinto(size_t& N, size_t&M, vector<casilla>& trampas, vector<casilla>& 
     vector<vertice> P(N*M);
     vector<tCoste> D = Dijkstra(G, 0, P);
 
-    if(D[(N*M)-1] != GrafoP<tCoste>::INFINITO)
+    if(D[(N*M)] != GrafoP<tCoste>::INFINITO)
     {
-        F.saltos = D[(N*M)-1];
+        F.saltos = D[(N*M)];
         F.sale = true;
     }
     else
