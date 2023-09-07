@@ -100,8 +100,8 @@ bool caballo(casilla c1, casilla c2, size_t N, size_t M)
 {
     if(c2.x >= 0 && c2.x < N && c2.y >= 0 && c2.y < M) //Para que no salga del tablero :)
     {
-        if((abs(c1.x - c2.x == 1) && abs(c1.y - c2.y == 2)) || 
-           (abs(c1.x - c2.x == 2) && abs(c1.y - c2.y == 1))) //Movimiento en L
+        if((abs(c1.x - c2.x) == 1 && abs(c1.y - c2.y) == 2) || 
+           (abs(c1.x - c2.x) == 2 && abs(c1.y - c2.y) == 1)) //Movimiento en L
             return true;
         else 
             return false;
