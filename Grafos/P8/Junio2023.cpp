@@ -87,6 +87,7 @@ casilla NodoToCasilla(vertice v, size_t M)
     casilla c;
     c.x = v/M;
     c.y = v % M;
+    return c;
 }
 
 bool adyacentes(casilla c1, casilla c2) //añade las diagonales porque tambien matan
@@ -152,9 +153,9 @@ fauno laberinto(size_t& N, size_t&M, vector<casilla>& trampas, vector<casilla>& 
     vector<vertice> P(N*M);
     vector<tCoste> D = Dijkstra(G, 0, P);
 
-    if(D[(N*M)] != GrafoP<tCoste>::INFINITO)
+    if(D[(N*M)-1] != GrafoP<tCoste>::INFINITO)
     {
-        F.saltos = D[(N*M)];
+        F.saltos = D[(N*M)-1];
         F.sale = true;
     }
     else
