@@ -135,7 +135,7 @@ vector<LineaAerea> Tombuctu(Grafo MA, vector<ciudad> ciudades)
         {
             IslasConectadas[v][w] = true; //marcamos las islas que se conectan
             IslasConectadas[w][v] = true;
-            Lineas[i] = l; //añadimos la linea aerea
+            Lineas.push_back(l); //añadimos la linea aerea
         }
     }
     
