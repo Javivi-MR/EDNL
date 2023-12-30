@@ -10,10 +10,10 @@ De cara a poder comparar costes de posibles reconstrucciones se asume lo siguien
 
 1. El coste de construir cualquier carretera o cualquier puente es proporcional a su longitud (distancia euclídea
 entre las poblaciones de inicio y fin de la carretera o el puente).
-2. Cualquier puente que se construya siempre será más barato que cualquier carretera que se cconstruya.
+2. Cualquier puente que se construya siempre será más barato que cualquier carretera que se construya.
 
 En estas condiciones, implementa un subprograma que calcule el coste mínimo de viajar entre dos ciudades de
-Grecoland origen y destino, después de haberse reconstruido el archpiélago, dados los siguientes datos:
+Grecoland origen y destino, después de haberse reconstruido el archipiélago, dados los siguientes datos:
 
 ·Lista de ciudades de Fobos representadas mediante sus coordenadas cartesianas.
 ·Lista de ciudades de Deimos representadas mediante sus coordenadas cartesianas.
@@ -96,6 +96,9 @@ vector<ciudad> costerasFobos, vector<ciudad> costerasDeimos, vector<ciudad> cost
         p1.v2 = p1.v2 + nf + nd;
     }
 
+    G[p1.v1][p1.v2] = p1.coste;
+    G[p1.v2][p1.v1] = p1.coste;
+
     puente p2 = mejorPuente(ciudadesFobos, ciudadesDeimos, ciudadesEuropa, costerasFobos, costerasDeimos, costerasEuropa, aux);
     if(aux == 1) //Fobos y Deimos
     {
@@ -110,6 +113,9 @@ vector<ciudad> costerasFobos, vector<ciudad> costerasDeimos, vector<ciudad> cost
         p2.v1 = p2.v1 + nf;
         p2.v2 = p2.v2 + nf + nd;
     }
+
+    G[p2.v1][p2.v2] = p2.coste;
+    G[p2.v2][p2.v1] = p2.coste;
 
     if(p1.coste > p2.coste)
         puenteMasCaro = p1.coste;
