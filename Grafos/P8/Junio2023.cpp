@@ -144,8 +144,12 @@ fauno laberinto(size_t& N, size_t&M, vector<casilla>& trampas, vector<casilla>& 
         {
             if(adyacentes(NodoToCasilla(i, M), caballeros[j]))
             {
-                G[i][CasillaToNodo(caballeros[j], M)] = GrafoP<tCoste>::INFINITO;
-                G[CasillaToNodo(caballeros[j], M)][i] = GrafoP<tCoste>::INFINITO;
+                for (size_t k = 0; k < N*M; k++)
+                {
+                    G[k][i] = GrafoP<tCoste>::INFINITO;
+                    G[i][k] = GrafoP<tCoste>::INFINITO;
+                }
+                
             }
         }
     }
@@ -170,15 +174,13 @@ fauno laberinto(size_t& N, size_t&M, vector<casilla>& trampas, vector<casilla>& 
 
 int main()
 {
-    size_t N = 7, M = 6;
+    size_t N = 4, M = 3;
 
-    vector<casilla> trampas (2);
-    trampas[0].x = 2; trampas[0].y = 2;
-    trampas[1].x = 2; trampas[0].y = 4;
+    vector<casilla> trampas (1);
+    trampas[0].x = 1; trampas[0].y = 1;
 
-    vector<casilla> caballeros (2);
-    caballeros[0].x = 3; caballeros[0].y = 5;
-    caballeros[1].x = 5; caballeros[1].y = 2;
+    vector<casilla> caballeros (1);
+    caballeros[0].x = 5; caballeros[0].y = 5;
 
     fauno F = laberinto(N, M, trampas, caballeros);
 
