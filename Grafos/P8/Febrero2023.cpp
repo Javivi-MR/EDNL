@@ -40,13 +40,6 @@ struct ciudad
     double x, y;
 };
 
-struct puente
-{
-    vertice v1, v2;
-    ciudad c1, c2;
-    double coste;
-};
-
 double distancia(ciudad c1, ciudad c2)
 {
     return sqrt(pow(abs(c1.x - c2.x), 2) + pow(abs(c1.y - c2.y), 2));
@@ -75,333 +68,114 @@ vector<ciudad> costerasFobos, vector<ciudad> costerasDeimos, vector<ciudad> cost
     size_t ne = ciudadesEuropa.size();
 
     GrafoP<double> G(nf + nd + ne);
-    double puenteMasCaro;
-    int aux = 0;
+    double puenteMasCaro = 0;
 
+    /*PUENTES*/
 
-    /**********PUENTES***********/
-
-    puente p1 = mejorPuente(ciudadesFobos, ciudadesDeimos, ciudadesEuropa, costerasFobos, costerasDeimos, costerasEuropa, aux);
-    if(aux == 1) //Fobos y Deimos
+    /*FOBOS-DEIMOS*/
+    for(vertice i = 0; i < costerasFobos.size(); i++)
     {
-        p1.v2 = p1.v2 + nf;
-    }
-    if(aux == 2) //Fobos y Europa
-    {
-        p1.v2 = p1.v2 + nf + nd;
-    }
-    if(aux == 3) //Deimos y Europa
-    {
-        p1.v1 = p1.v1 + nf;
-        p1.v2 = p1.v2 + nf + nd;
-    }
-
-    G[p1.v1][p1.v2] = p1.coste;
-    G[p1.v2][p1.v1] = p1.coste;
-
-    puente p2 = mejorPuente(ciudadesFobos, ciudadesDeimos, ciudadesEuropa, costerasFobos, costerasDeimos, costerasEuropa, aux);
-    if(aux == 1) //Fobos y Deimos
-    {
-        p2.v2 = p2.v2 + nf;
-    }
-    if(aux == 2) //Fobos y Europa
-    {
-        p2.v2 = p2.v2 + nf + nd;
-    }
-    if(aux == 3) //Deimos y Europa
-    {
-        p2.v1 = p2.v1 + nf;
-        p2.v2 = p2.v2 + nf + nd;
-    }
-
-    G[p2.v1][p2.v2] = p2.coste;
-    G[p2.v2][p2.v1] = p2.coste;
-
-    if(p1.coste > p2.coste)
-        puenteMasCaro = p1.coste;
-    else
-        puenteMasCaro = p2.coste;
-
-    /********CARRETERAS********/
-
-
-
-    //FOBOS
-
-    for (vertice i = 0; i < nf - 1; i++)
-    {
-        for (vertice j = i + 1; i < nf; j++)
+        vertice Cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
+        for(vertice j = 0; j < costerasDeimos.size(); j++)
         {
-            G[i][j] = distancia(ciudadesFobos[i], ciudadesFobos[j]) + puenteMasCaro;
-            G[j][i] = distancia(ciudadesFobos[i], ciudadesFobos[j]) + puenteMasCaro;
-        }    
-    }
-    
-    //DEIMOS
+            vertice Cd = BuscarCiudad(costerasDeimos[j], ciudadesDeimos) + nf;
+            double dist = distancia(costerasFobos[i], costerasDeimos[j]);
+            G[Cf][Cd] = G[Cd][Cf] = dist;
 
-    for (vertice i = nf; i < nf + nd - 1; i++)
+            if(dist > puenteMasCaro)
+                puenteMasCaro = dist;
+        }
+    }
+
+    /*FOBOS-EUROPA*/
+    for(vertice i = 0; i < costerasFobos.size(); i++)
     {
-        for (vertice j = i + 1; i < nf + nd; j++)
+        vertice Cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
+        for(vertice j = 0; j < costerasEuropa.size(); j++)
         {
-            G[i][j] = distancia(ciudadesDeimos[i-nf], ciudadesDeimos[j-nf]) + puenteMasCaro;
-            G[j][i] = distancia(ciudadesDeimos[i-nf], ciudadesDeimos[j-nf]) + puenteMasCaro;
-        }    
+            vertice Ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa) + nf + nd;
+            double dist = distancia(costerasFobos[i], costerasEuropa[j]);
+            G[Cf][Ce] = G[Ce][Cf] = dist;
+
+            if(dist > puenteMasCaro)
+                puenteMasCaro = dist;
+        }
     }
 
-    //EUROPA
-
-    for (vertice i = nf + nd; i < nf + nd + ne - 1; i++)
+    /*DEIMOS-EUROPA*/
+    for(vertice i = 0; i < costerasDeimos.size(); i++)
     {
-        for (vertice j = i + 1; i < nf + nd + ne; j++)
+        vertice Cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos);
+        for(vertice j = 0; j < costerasEuropa.size(); j++)
         {
-            G[i][j] = distancia(ciudadesEuropa[i-nf-ne], ciudadesEuropa[j-nf-ne]) + puenteMasCaro;
-            G[j][i] = distancia(ciudadesEuropa[i-nf-ne], ciudadesEuropa[j-nf-ne]) + puenteMasCaro;
-        }    
+            vertice Ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa) + nf + nd;
+            double dist = distancia(costerasDeimos[i], costerasEuropa[j]);
+            G[Cd][Ce] = G[Ce][Cd] = dist;
+
+            if(dist > puenteMasCaro)
+                puenteMasCaro = dist;
+        }
     }
 
-    for (vertice i = 0; i < nf + nd + ne; i++)
+    /*CARRETERAS*/
+
+    /*FOBOS*/
+
+    for(vertice i = 0; i < nf; i++)
     {
+        for(vertice j = 0; j < nf; j++)
+        {
+            if(i != j)
+                G[i][j] = G[j][i] = distancia(ciudadesFobos[i], ciudadesFobos[j]) + puenteMasCaro;
+        }
+    }
+
+    /*DEIMOS*/
+
+    for(vertice i = 0; i < nd; i++)
+    {
+        for(vertice j = 0; j < nd; j++)
+        {
+            if(i != j)
+                G[i+nf][j+nf] = G[j+nf][i+nf] = distancia(ciudadesDeimos[i], ciudadesDeimos[j]) + puenteMasCaro;
+        }
+    }
+
+    /*EUROPA*/
+
+    for(vertice i = 0; i < ne; i++)
+    {
+        for(vertice j = 0; j < ne; j++)
+        {
+            if(i != j)
+                G[i+nf+nd][j+nf+nd] = G[j+nf+nd][i+nf+nd] = distancia(ciudadesEuropa[i], ciudadesEuropa[j]) + puenteMasCaro;
+        }
+    }
+
+    for (vertice i = 0; i < G.numVert(); i++)
         G[i][i] = 0;
-    }
     
+    /*ELIMINAR ARISTAS SOBRANTES CON KRUSKAL (DLH APRENDE A ESCRIBIRLO BIEN ULTIMO AVISO >:( )*/
+    GrafoP<double> K(G.numVert());
+    K = Kruskall(G);
 
-    GrafoP<double> GrecolandPrim(nf + nd + ne);
-    GrecolandPrim = Prim(G); //Ya tenemos las carreteras al menor coste y los puentes reconstruidos
+    /*CALCULAR COSTE ENTRE CIUDADES*/
 
-
-    vector<vertice> P(nf + nd + ne);
-    vector<double> D(nf + nd + ne);
-
-    //Buscamos las ciudades origen y destino
     vertice o = BuscarCiudad(origen, ciudadesFobos);
     if(o == -1)
-    {
         o = BuscarCiudad(origen, ciudadesDeimos);
-        if(o == -1)
-            o = BuscarCiudad(origen, ciudadesEuropa);
-    }
+    if(o == -1)
+        o = BuscarCiudad(origen, ciudadesEuropa);
 
     vertice d = BuscarCiudad(destino, ciudadesFobos);
     if(d == -1)
-    {
         d = BuscarCiudad(destino, ciudadesDeimos);
-        if(d == -1)
-            d = BuscarCiudad(destino, ciudadesEuropa);
-    }
+    if(d == -1)
+        d = BuscarCiudad(destino, ciudadesEuropa);
 
-    
-    D = Dijkstra(GrecolandPrim, o, P);
+    vector<vertice> P;
+
+    vector<double> D = Dijkstra(K, o, P);
 
     return D[d];
-}
-
-puente mejorPuente(vector<ciudad> ciudadesFobos, vector<ciudad> ciudadesDeimos,
-vector<ciudad> ciudadesEuropa, vector<ciudad> costerasFobos, vector<ciudad> costerasDeimos, vector<ciudad> costerasEuropa, int& aux)
-{
-    puente paux;
-    paux.coste = GrafoP<double>::INFINITO;
-
-    if(aux == 0)
-    {
-        //FOBOS - DEIMOS
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesDeimos.size(); j++)
-            {
-                vertice cd = BuscarCiudad(costerasDeimos[j], ciudadesDeimos);
-                double costeaux = distancia(costerasFobos[i], costerasDeimos[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesDeimos[cd];
-                    paux.v1 = cf;
-                    paux.v2 = cd;
-                    aux = 1;
-                }
-            }
-        }
-        
-        //FOBOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasFobos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cf;
-                    paux.v2 = ce;
-                    aux = 2;
-                }
-            }
-        }
-
-        //DEIMOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesDeimos.size(); i++)
-        {
-            vertice cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasDeimos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesDeimos[cd];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cd;
-                    paux.v2 = ce;
-                    aux = 1;
-                }
-            }
-        }
-    }
-
-    if(aux == 1)
-    {
-        
-        //FOBOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasFobos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cf;
-                    paux.v2 = ce;
-                    aux = 2;
-                }
-            }
-        }
-
-        //DEIMOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesDeimos.size(); i++)
-        {
-            vertice cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasDeimos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesDeimos[cd];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cd;
-                    paux.v2 = ce;
-                    aux = 1;
-                }
-            }
-        }
-    }
-
-    if(aux == 2)
-    {
-        //FOBOS - DEIMOS
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesDeimos.size(); j++)
-            {
-                vertice cd = BuscarCiudad(costerasDeimos[j], ciudadesDeimos);
-                double costeaux = distancia(costerasFobos[i], costerasDeimos[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesDeimos[cd];
-                    paux.v1 = cf;
-                    paux.v2 = cd;
-                    aux = 1;
-                }
-            }
-        }
-
-        //DEIMOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesDeimos.size(); i++)
-        {
-            vertice cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasDeimos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesDeimos[cd];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cd;
-                    paux.v2 = ce;
-                    aux = 1;
-                }
-            }
-        }
-    }
-
-    if(aux == 3)
-    {
-        //FOBOS - DEIMOS
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesDeimos.size(); j++)
-            {
-                vertice cd = BuscarCiudad(costerasDeimos[j], ciudadesDeimos);
-                double costeaux = distancia(costerasFobos[i], costerasDeimos[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesDeimos[cd];
-                    paux.v1 = cf;
-                    paux.v2 = cd;
-                    aux = 1;
-                }
-            }
-        }
-        
-        //FOBOS - EUROPA
-
-        for (size_t i = 0; i < ciudadesFobos.size(); i++)
-        {
-            vertice cf = BuscarCiudad(costerasFobos[i], ciudadesFobos);
-            for (size_t j = 0; j < ciudadesEuropa.size(); j++)
-            {
-                vertice ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa);
-                double costeaux = distancia(costerasFobos[i], costerasEuropa[j]);
-                if(costeaux < paux.coste)
-                {
-                    paux.coste = costeaux;
-                    paux.c1 = ciudadesFobos[cf];
-                    paux.c2 = ciudadesEuropa[ce];
-                    paux.v1 = cf;
-                    paux.v2 = ce;
-                    aux = 2;
-                }
-            }
-        }
-    }
-
-    return paux;
 }
