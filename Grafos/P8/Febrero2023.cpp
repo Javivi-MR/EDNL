@@ -105,7 +105,7 @@ vector<ciudad> costerasFobos, vector<ciudad> costerasDeimos, vector<ciudad> cost
     /*DEIMOS-EUROPA*/
     for(vertice i = 0; i < costerasDeimos.size(); i++)
     {
-        vertice Cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos);
+        vertice Cd = BuscarCiudad(costerasDeimos[i], ciudadesDeimos) + nf;
         for(vertice j = 0; j < costerasEuropa.size(); j++)
         {
             vertice Ce = BuscarCiudad(costerasEuropa[j], ciudadesEuropa) + nf + nd;
