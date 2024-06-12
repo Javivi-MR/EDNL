@@ -155,7 +155,7 @@ double costeVPuente, double costeVCarretera)
         }
     }
 
-    puentes p = mejoresPuentes(ciudadesFobos, ciudadesDeimos, ciudadesEuropa);
+    puentes p = mejoresPuentes(ciudadesFobos, ciudadesDeimos, ciudadesEuropa, nf, nd, ne);
 
     puente p1 = p.p1;
     puente p2 = p.p2;
@@ -174,7 +174,7 @@ double costeVPuente, double costeVCarretera)
 }
 
 puentes mejoresPuentes(vector<ciudad> ciudadesFobos, vector<ciudad> ciudadesDeimos,
-vector<ciudad> ciudadesEuropa)
+vector<ciudad> ciudadesEuropa, size_t nf, size_t nd, size_t ne)
 {
     puentes p;
     puente p1, p2;
@@ -184,9 +184,9 @@ vector<ciudad> ciudadesEuropa)
     DE.coste = GrafoP<double>::INFINITO;
 
     //FOBOS-DEIMOS
-    for(size_t i = 0; i < ciudadesFobos.size(); i++)
+    for(size_t i = 0; i < nf; i++)
     {
-        for(size_t j = 0; j < ciudadesDeimos.size(); j++)
+        for(size_t j = 0; j < nd; j++)
         {
             double coste = distancia(ciudadesFobos[i], ciudadesDeimos[j]);
             if(coste < FD.coste)
@@ -194,14 +194,16 @@ vector<ciudad> ciudadesEuropa)
                 FD.coste = coste;
                 FD.c1 = ciudadesFobos[i];
                 FD.c2 = ciudadesDeimos[j];
+                FD.v1 = i;
+                FD.v2 = j + nf;
             }
         }
     }
 
     //FOBOS-EUROPA
-    for(size_t i = 0; i < ciudadesFobos.size(); i++)
+    for(size_t i = 0; i < nf; i++)
     {
-        for(size_t j = 0; j < ciudadesEuropa.size(); j++)
+        for(size_t j = 0; j < ne; j++)
         {
             double coste = distancia(ciudadesFobos[i], ciudadesEuropa[j]);
             if(coste < FE.coste)
@@ -209,14 +211,16 @@ vector<ciudad> ciudadesEuropa)
                 FE.coste = coste;
                 FE.c1 = ciudadesFobos[i];
                 FE.c2 = ciudadesEuropa[j];
+                FE.v1 = i;
+                FE.v2 = j + nf + nd;
             }
         }
     }
 
     //DEIMOS-EUROPA
-    for(size_t i = 0; i < ciudadesDeimos.size(); i++)
+    for(size_t i = 0; i < nd; i++)
     {
-        for(size_t j = 0; j < ciudadesEuropa.size(); j++)
+        for(size_t j = 0; j < ne; j++)
         {
             double coste = distancia(ciudadesDeimos[i], ciudadesEuropa[j]);
             if(coste < DE.coste)
@@ -224,6 +228,8 @@ vector<ciudad> ciudadesEuropa)
                 DE.coste = coste;
                 DE.c1 = ciudadesDeimos[i];
                 DE.c2 = ciudadesEuropa[j];
+                DE.v1 = i + nf;
+                DE.v2 = j + nf + nd;
             }
         }
     }
@@ -234,17 +240,23 @@ vector<ciudad> ciudadesEuropa)
     {
         p1.c1 = FD.c1;
         p1.c2 = FD.c2;
+        p1.v1 = FD.v1;
+        p1.v2 = FD.v2;
         p2.coste = min(FE.coste, DE.coste);
 
         if(p2.coste == FE.coste)
         {
             p2.c1 = FE.c1;
             p2.c2 = FE.c2;
+            p2.v1 = FE.v1;
+            p2.v2 = FE.v2;
         }
         else
         {
             p2.c1 = DE.c1;
             p2.c2 = DE.c2;
+            p2.v1 = DE.v1;
+            p2.v2 = DE.v2;
         }
     }
 
@@ -252,17 +264,23 @@ vector<ciudad> ciudadesEuropa)
     {
         p1.c1 = FE.c1;
         p1.c2 = FE.c2;
+        p1.v1 = FE.v1;
+        p1.v2 = FE.v2;
         p2.coste = min(FD.coste, DE.coste);
 
         if(p2.coste == FD.coste)
         {
             p2.c1 = FD.c1;
             p2.c2 = FD.c2;
+            p2.v1 = FD.v1;
+            p2.v2 = FD.v2;
         }
         else
         {
             p2.c1 = DE.c1;
             p2.c2 = DE.c2;
+            p2.v1 = DE.v1;
+            p2.v2 = DE.v2;
         }
     }
 
@@ -270,17 +288,23 @@ vector<ciudad> ciudadesEuropa)
     {
         p1.c1 = DE.c1;
         p1.c2 = DE.c2;
+        p1.v1 = DE.v1;
+        p1.v2 = DE.v2;
         p2.coste = min(FD.coste, FE.coste);
 
         if(p2.coste == FD.coste)
         {
             p2.c1 = FD.c1;
             p2.c2 = FD.c2;
+            p2.v1 = FD.v1;
+            p2.v2 = FD.v2;
         }
         else
         {
             p2.c1 = FE.c1;
             p2.c2 = FE.c2;
+            p2.v1 = FE.v1;
+            p2.v2 = FE.v2;
         }
     }
 
