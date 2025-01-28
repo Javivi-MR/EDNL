@@ -17,7 +17,7 @@ const tElto fin = '#';
 
 int nostalgicos(Abin<tElto> A);
 int nostalgicosRec(Abin<tElto> A,Abin<tElto>::nodo n);
-int Ascentros(Abin<tElto> A,Abin<tElto>::nodo n);
+int Ancestros(Abin<tElto> A,Abin<tElto>::nodo n);
 int Sucesores(Abin<tElto> A,Abin<tElto>::nodo n);
 
 int main()
@@ -59,7 +59,7 @@ int nostalgicosRec(Abin<tElto> A,Abin<tElto>::nodo n)
     }
     else
     {
-        if(Ascentros(A,n) > Sucesores(A,n))
+        if(Ancestros(A,n) > Sucesores(A,n))
         {
             return 1 + nostalgicosRec(A,A.hijoIzqdo(n)) + nostalgicosRec(A,A.hijoDrcho(n));
         }
@@ -70,7 +70,7 @@ int nostalgicosRec(Abin<tElto> A,Abin<tElto>::nodo n)
     }
 }
 
-int Ascentros(Abin<tElto> A,Abin<tElto>::nodo n)
+int Ancestros(Abin<tElto> A,Abin<tElto>::nodo n)
 {
     if(n == Abin<tElto>::NODO_NULO)
     {
@@ -78,7 +78,7 @@ int Ascentros(Abin<tElto> A,Abin<tElto>::nodo n)
     }
     else
     {
-        return 1 + Ascentros(A,A.padre(n));
+        return 1 + Ancestros(A,A.padre(n));
     }
 }
 
@@ -90,6 +90,6 @@ int Sucesores(Abin<tElto> A,Abin<tElto>::nodo n)
     }
     else
     {
-        return 1 + Ascentros(A,A.hijoIzqdo(n)) + Ascentros(A,A.hijoDrcho(n));
+        return 1 + Ancestros(A,A.hijoIzqdo(n)) + Ancestros(A,A.hijoDrcho(n));
     }
 }
