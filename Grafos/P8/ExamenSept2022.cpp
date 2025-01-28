@@ -39,9 +39,9 @@ casilla NodoToCasilla(vertice v,size_t N)
 }
 
 /*
-    abyacentes -> Recibe dos casillas, y devuelve true si las dos casilla son adyacentes (se puede realizar un movimiento entre ellas) o false si no
+    adyacentes -> Recibe dos casillas, y devuelve true si las dos casilla son adyacentes (se puede realizar un movimiento entre ellas) o false si no
 */
-bool abyacentes (casilla c1, casilla c2)
+bool adyacentes (casilla c1, casilla c2)
 {
     if(c1.z == c2.z) // si estan en el mismo tablero:
     {
@@ -68,7 +68,7 @@ tCoste laberinto(size_t& N,vector<casilla>& piedras, casilla& entrada, casilla& 
     {
         for(vertice j = 0; j < G.numVert() ; j++)
         {
-            if(abyacentes(NodoToCasilla(i,N),NodoToCasilla(j,N))) // Si las casillas representadass por los vertices son adyacentes:
+            if(adyacentes(NodoToCasilla(i,N),NodoToCasilla(j,N))) // Si las casillas representadass por los vertices son adyacentes:
             {
                 G[i][j] = 1; // Existe un camino de 1 unidad de longitud entre ellas (direccion i -> j)
                 G[j][i] = 1; // Existe un camino de 1 unidad de longitud entre ellas (direccion j -> i)
